@@ -1,0 +1,15 @@
+apiVersion: pipecd.dev/v1beta1
+kind: TerraformApp
+spec:
+  name: s3-app-storage
+  labels:
+    env: staging
+    component: infrastructure
+  input:
+    # Point this to the directory where your App's specific infra lives
+    terraformDir: terraform/app-resources/
+  pipeline:
+    stages:
+      # This shows you the 'terraform plan' in the PipeCD UI before it applies
+      - name: TERRAFORM_PLAN
+      - name: TERRAFORM_APPLY
