@@ -1,0 +1,46 @@
+# Control Plane Settings
+server:
+  spec:
+    replicas: 1
+    # We use SQLITE and LOCAL filestore to avoid AWS RDS/S3 costs for now
+    database:
+      type: SQLITE
+    filestore:
+      type: LOCAL
+    # Default login for the UI
+    # Username: hello-pipecd
+    # Password: password
+    address: http://pipecd-server:8080
+
+gateway:
+  spec:
+    replicas: 1
+
+# Piped Agent Settings
+# This is the "Worker" that will deploy your FastAPI app and Terraform infra
+piped:
+  enabled: true
+  spec:
+    projectId: quickstart
+    # NOTE: You will fill these two after creating a Piped in the UI
+    pipedId: "REPLACE_WITH_YOUR_PIPED_ID"
+    pipedKey: "REPLACE_WITH_YOUR_PIPED_KEY"
+    
+    config: |
+      apiVersion: pipecd.dev/v1beta1
+      kind: Piped
+      spec:
+        cloudProviders:
+          # This allows PipeCD to deploy to your EKS cluster
+          - name: kubernetes-default
+            type: KUBERNETES
+            config: {}
+          # This allows PipeCD to run Terraform for your S3 buckets
+          - name: terraform-default
+            type: TERRAFORM
+            config: {}
+        # Keeps logs and metadata within the cluster
+        platformProviders:
+          - name: kubernetes-default
+            type: KUBERNETES
+            config: {}
